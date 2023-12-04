@@ -190,7 +190,8 @@ class ProgressiveGANTrainer(GANTrainer):
                 print("Scale %d, updating the training configuration" % scale)
                 print(self.configScheduler[scale])
                 self.model.updateConfig(self.configScheduler[scale])
-                wandb.log({"batch_size": self.model.config.miniBatchSize, "lr": self.model.config.learningRate})
+
+        wandb.log({"batch_size": self.modelConfig.miniBatchSize, "lr": self.model.config.learningRate})
 
     def train(self):
         r"""
