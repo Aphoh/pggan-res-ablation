@@ -2,6 +2,7 @@
 import os
 import json
 import pickle as pkl
+import wandb
 
 import torch
 import torchvision.transforms as Transforms
@@ -330,11 +331,17 @@ class GANTrainer():
         with open(pathTmpConfig, 'w') as fp:
             json.dump(outConfig, fp, indent=4)
 
+        artifact = wandb.Artifact(name=f'checkpoint_scale{scale}_iter{iter}', type='checkpoint', description=f'scale {scale} iter {iter}')
+        artifact.add_file(pathModel, name='model.pt')
+        artifact.add_file(pathTmpConfig, name='config.json')
+        artifact.add_file(self.pathRefVector, name='refVectors.pt')
+        wandb.log_artifact(artifact)
+
         if self.pathLossLog is None:
             raise AttributeError("Logging mode disabled")
 
         if self.pathLossLog is not None:
-            pkl.dump(self.lossProfile, open(self.pathLossLog, 'wb'))
+            pass #pkl.dump(self.lossProfile, open(self.pathLossLog, 'wb'))
 
         if self.visualisation is not None:
             ref_g = self.model.test(self.refVectorVisualization)
@@ -345,6 +352,8 @@ class GANTrainer():
             ref_g_smooth = self.model.test(self.refVectorVisualization, True)
             self.visualisation.saveTensor(ref_g_smooth, (imgSize, imgSize),
                                           os.path.join(outDir, outLabel + '_avg.jpg'))
+
+            wandb.log({"ref_g": wandb.Image(self.refVectorVisualization), "ref_g_smooth": wandb.Image(ref_g_smooth)})
 
     def sendToVisualization(self, refVectorReal, scale, label=None):
         r"""
@@ -371,6 +380,10 @@ class GANTrainer():
                                               env=envLabel)
 
         ref_g = self.model.test(self.refVectorVisualization, False)
+
+        wandb.log({"ref_real": wandb.Image(refVectorReal), 
+                   "ref_g": wandb.Image(ref_g), 
+                   "ref_g_smooth": wandb.Image(ref_g_smooth)})
 
         self.tokenWindowFake = \
             self.visualisation.publishTensors(ref_g,
@@ -499,6 +512,7 @@ class GANTrainer():
                 print('[%d : %6d] loss G : %.3f loss D : %.3f' % (scale, i,
                       self.lossProfile[-1]["lossG"][-1],
                       self.lossProfile[-1]["lossD"][-1]))
+                wandb.log({"lossG": self.lossProfile[-1]["lossG"][-1], "lossD": self.lossProfile[-1]["lossD"][-1], "scale": scale, "iter": i})
 
                 self.resetRunningLosses()
 

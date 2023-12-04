@@ -5,6 +5,7 @@ from .standard_configurations.pgan_config import _C
 from ..progressive_gan import ProgressiveGAN
 from .gan_trainer import GANTrainer
 from ..utils.utils import getMinOccurence
+import wandb
 import torch.nn.functional as F
 
 
@@ -208,6 +209,9 @@ class ProgressiveGANTrainer(GANTrainer):
                                           + "_train_config.json")
             self.saveBaseConfig(pathBaseConfig)
 
+        epoch = 0
+        wandb.init()
+
         for scale in range(self.startScale, n_scales):
 
             self.updateDatasetForScale(scale)
@@ -231,11 +235,12 @@ class ProgressiveGANTrainer(GANTrainer):
 
             while shiftIter < self.modelConfig.maxIterAtScale[scale]:
 
+                epoch += 1
+                wandb.log({"scale": scale, "epoch": epoch})
                 self.indexJumpAlpha = shiftAlpha
                 status = self.trainOnEpoch(dbLoader, scale,
                                            shiftIter=shiftIter,
                                            maxIter=self.modelConfig.maxIterAtScale[scale])
-
                 if not status:
                     return False
 
