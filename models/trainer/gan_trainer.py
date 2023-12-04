@@ -353,7 +353,7 @@ class GANTrainer():
             self.visualisation.saveTensor(ref_g_smooth, (imgSize, imgSize),
                                           os.path.join(outDir, outLabel + '_avg.jpg'))
 
-            wandb.log({"ref_g": wandb.Image(self.refVectorVisualization), "ref_g_smooth": wandb.Image(ref_g_smooth)})
+            wandb.log({"ref_g": wandb.Image(ref_g), "ref_g_smooth": wandb.Image(ref_g_smooth)})
 
     def sendToVisualization(self, refVectorReal, scale, label=None):
         r"""
@@ -381,7 +381,7 @@ class GANTrainer():
 
         ref_g = self.model.test(self.refVectorVisualization, False)
 
-        wandb.log({"ref_real": wandb.Image(refVectorReal), 
+        wandb.log({"ref_real": wandb.Image(refVectorReal[:16]), 
                    "ref_g": wandb.Image(ref_g), 
                    "ref_g_smooth": wandb.Image(ref_g_smooth)})
 
