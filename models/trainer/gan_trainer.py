@@ -332,9 +332,10 @@ class GANTrainer():
             json.dump(outConfig, fp, indent=4)
 
         artifact = wandb.Artifact(name=f'checkpoint_scale{scale}_iter{iter}', type='checkpoint', description=f'scale {scale} iter {iter}')
-        artifact.add_file(pathModel, name='model.pt')
-        artifact.add_file(pathTmpConfig, name='config.json')
-        artifact.add_file(self.pathRefVector, name='refVectors.pt')
+        artifact.add_file(pathModel, name=outLabel + '.pt')
+        artifact.add_file(pathTmpConfig, name=outLabel + '_tmp_config.json')
+        artifact.add_file(self.pathLossLog, name=self.modelLabel + '_losses.pkl')
+        artifact.add_file(self.pathRefVector, name=self.modelLabel + '_refVectors.pt')
         wandb.log_artifact(artifact)
 
         if self.pathLossLog is None:
