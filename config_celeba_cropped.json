@@ -1,0 +1,41 @@
+{
+  "pathDB": "./celeba_out/",
+  "miniBatchScheduler": {
+    "0": 256,
+    "1": 128,
+    "2": 64,
+    "3": 16,
+    "4": 16,
+    "5": 16
+  },
+  "configScheduler": {
+    "0": {
+      "baseLearningRate": 0.004
+    },
+    "1": {
+      "baseLearningRate": 0.00282
+    },
+    "2": {
+      "baseLearningRate": 0.002
+    },
+    "3": {
+      "baseLearningRate": 0.001
+    },
+    "4": {
+      "baseLearningRate": 0.001
+    },
+    "5": {
+      "baseLearningRate": 0.001
+    }
+  },
+  "config": {
+    "maxIterAtScale": [
+      48000,
+      96000,
+      96000,
+      96000,
+      96000,
+      96000
+    ]
+  }
+}
