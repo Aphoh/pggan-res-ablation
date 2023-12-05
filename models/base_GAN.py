@@ -172,7 +172,6 @@ class BaseGAN():
             x = self.real_input
             alpha += 0.1
             if alpha > 0:
-                print(x.shape)
                 xd = torch.nn.functional.interpolate(x, (x.shape[-2] // 2, x.shape[-1] // 2), mode='bilinear', antialias=True)
                 xd = torch.nn.functional.interpolate(xd, (x.shape[-2], x.shape[-1]), mode='bilinear', antialias=True)
                 self.real_input = xd * alpha + x * (1 - alpha)
