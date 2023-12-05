@@ -167,6 +167,15 @@ class BaseGAN():
 
         # Retrieve the input data
         self.real_input, self.realLabels = input_batch.to(self.device), None
+        if hasattr(self.config, "alpha"):
+            alpha = getattr(self.config, "alpha")
+            x = self.real_input
+            alpha += 0.1
+            if alpha > 0:
+                print(x.shape)
+                xd = torch.nn.functional.interpolate(x, (x.shape[-2] // 2, x.shape[-1] // 2), mode='bilinear', antialias=True)
+                xd = torch.nn.functional.interpolate(xd, (x.shape[-2], x.shape[-1]), mode='bilinear', antialias=True)
+                self.real_input = xd * alpha + x * (1 - alpha)
 
         if self.config.attribKeysOrder is not None:
             self.realLabels = inputLabels.to(self.device)

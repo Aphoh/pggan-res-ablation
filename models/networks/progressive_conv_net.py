@@ -154,10 +154,6 @@ class GNet(nn.Module):
 
     def forward(self, x):
 
-        if self.alpha > 0 and len(self.scaleLayers) > 1: # alpha is the weight of the previous layer
-            xd = F.interpolate(x, (x.shape[-2] // 2, x.shape[-1] // 2), mode='bilinear', antialias=True)
-            xd = F.interpolate(xd, (x.shape[-2], x.shape[-1]), mode='bilinear', antialias=True)
-            x = xd * self.alpha + x * (1 - self.alpha)
         ## Normalize the input ?
         if self.normalizationLayer is not None:
             x = self.normalizationLayer(x)
